@@ -1,15 +1,51 @@
-const inquirer = require('inquirer');
-const express = require("express");
-const db = require('./config/connection')
-const routes = require("./routes");
+const inquirer = require("inquirer");
+const cTable = require("console.table");
 
-const app = express();
-const PORT = process.env.PORT || 3001;
+const mysql = require("mysql2");
 
-app.use(express.urlencoded({extended: true}));
-app.use(express.json());
-app.use(routes);
+const db = mysql.createConnection(
+{
+  host: "localhost",
+  user: "root",
+  password: "password",
+  database: "employees_db"
+},
+ console.log('Connected to employees_db database')
+);
 
-app.listen(PORT, ()=>{
-    console.log(`server listening on ${PORT}`);
-})
+
+inquirer
+  .prompt([
+    {
+      type: "list",
+      message: "What would you like to do?",
+      name: "choices",
+      choices: [
+        { name: "View all employees", value: 0 },
+        { name: "Add employee", value: 1 },
+        { name: "View all roles", value: 2 },
+        { name: "Add role", value: 3 },
+        { name: "View all departments", value: 4 },
+        { name: "Add a department", value: 5 },
+        { name: "Update employee role", value: 6 },
+      ],
+    },
+  ]).then((response) => {
+      if(response.choices === 0) {
+          db.query('SELECT employee.first_name, employee.last_name, department.id, department.dept_name, roles.title, roles.salary FROM department JOIN roles ON department.id = roles.department_id JOIN employee ON roles.id = employee.role_id;', function (err, results) {
+              console.table(results);
+          });
+
+      } else if(response.choices === 1) {
+          inquirer.prompt([
+              {
+                  type: 'input',
+                  name: ''
+              }
+          ])
+          db.query('INSERT INTO')
+          console.log('Added employee')
+        }
+    });
+  
+  
