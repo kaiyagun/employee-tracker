@@ -37,14 +37,36 @@ inquirer
           });
 
       } else if(response.choices === 1) {
-          inquirer.prompt([
+          const roleChoices = [];
+          const chooseRole = () => db.query(`SELECT title FROM roles`, (err, result) => {
+            for (let i = 0; i < result.length; i++) {
+                const roles = result[i];
+
+                roleChoices.push(`{name: '` + roles[i] +`', value: '`+ i++ + `'}`)                
+            }
+          })
+          chooseRole()
+
+          
+          return inquirer.prompt([
               {
                   type: 'input',
-                  name: ''
+                  name: 'firstname',
+                  message: 'Employee first name?'
+              },
+              {
+                  type: 'input',
+                  name: 'lastname',
+                  message: 'Employee last name?'
+              },
+              {
+                  type: 'list',
+                  name: 'roles',
+                  choices: roleChoices
               }
           ])
-          db.query('INSERT INTO')
-          console.log('Added employee')
+        //   db.query('INSERT INTO')
+        //   console.log('Added employee')
         }
     });
   
